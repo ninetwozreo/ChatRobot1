@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.chatRobot.dao.IUserDao">
+
+    <!--通过用户名查找对应的密码-->
+    <select id="selectPasswordByUserName" resultType="String" parameterType="String">
+        SELECT password FROM  USER  WHERE username=#{username}
+    </select>
+
+    <!--用户名查找用户信息-->
+    <select id="selectUserByName" resultType="User" parameterType="String">
+        SELECT * FROM  USER WHERE username=#{username}
+    </select>
+
+    <!--通过用户id查找用户信息-->
+    <select id="selectUser" resultType="User" parameterType="long">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+
+    <!--<parameterMap id="" type=""-->
+    <!--注册新用户-->
+    <insert id="insertUser" parameterType="User">
+          INSERT INTO USER(email,password,username,role,status,regTime,regIp)VALUES
+          (#{email},#{password},#{username},#{role},#{status},#{regTime},#{regIp})
+    </insert>
+
+</mapper>

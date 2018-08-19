@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.chatRobot.dao.IRobotDao">
+
+    <!--&lt;!&ndash;通过用户名查找对应的密码&ndash;&gt;-->
+    <!--<select id="selectPasswordByUserName" resultType="String" parameterType="String">-->
+        <!--SELECT password FROM  USER  WHERE username=#{username}-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;用户名查找用户信息&ndash;&gt;-->
+    <!--<select id="selectUserByName" resultType="User" parameterType="String">-->
+        <!--SELECT * FROM  USER WHERE username=#{username}-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;通过用户id查找用户信息&ndash;&gt;-->
+    <!--<select id="selectUser" resultType="User" parameterType="long">-->
+        <!--SELECT * FROM user WHERE id = #{id}-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;<parameterMap id="" type=""&ndash;&gt;-->
+    <!--注册新用户-->
+    <insert id="insertContent" parameterType="User">
+          INSERT INTO conversation_content(content)VALUES
+          (一句话);
+    </insert>
+
+</mapper>
