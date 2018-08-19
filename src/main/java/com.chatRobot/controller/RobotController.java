@@ -22,9 +22,19 @@ public class RobotController {
     private IRobotService robotService;
 
     @RequestMapping("/leaning")
-    public void 我在学习呢(HttpServletRequest request, HttpServletResponse response,String 我听到的话,String 我应该回答的话) {
-//        userService.learning(我听到的话,我应该回答的话);
-        robotService.learning(我听到的话,我应该回答的话);
+    public void Learning(HttpServletRequest request, HttpServletResponse response,String listenContent,String answerContent) {
+//        userService.learning(listenContent,answerContent);
+        robotService.learning(listenContent,answerContent);
+
+    }
+
+    @RequestMapping("/talk")
+    public String Talking(HttpServletRequest request, HttpServletResponse response,String listenContent) {
+//        userService.learning(listenContent,answerContent);
+        String a =robotService.Answer(listenContent);
+        request.setAttribute("back",a);
+
+        return a;
 
     }
 

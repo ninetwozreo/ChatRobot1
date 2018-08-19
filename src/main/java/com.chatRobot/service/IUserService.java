@@ -11,5 +11,5 @@ public interface IUserService {
 
     User selectUserByUserName(String username);
 
-//    public String learning(String 我听到的话,String 我应该回答的话);
+//    public String learning(String listenContent,String answerContent);
 }

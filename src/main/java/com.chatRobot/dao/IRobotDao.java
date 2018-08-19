@@ -1,23 +1,30 @@
 package com.chatRobot.dao;
 
+import com.chatRobot.model.Talk;
 import com.chatRobot.model.User;
 
 public interface IRobotDao {
 
     User selectUser(long id);
-    void learning(String 我听到的话,String 我应该回答的话);
+    void learning(String listenContent,String answerContent);
 
     String selectPasswordByUserName(String username);
 
     User selectUserByName(String username);
 
-//    void insertListening(String 我听到的话);
+//    void insertListening(String listenContent);
 //
-//    void insertAnswering(String 我应该回答的话);
+//    void insertAnswering(String answerContent);
 
-    String selectContentIDByContent(String 那句话);
+    String selectContentIDByContent(String theWord);
 
-    void insertCorrespond(String idIn, String idOut);
+    String selecttest(int id);
 
-    void insertContent(String 一句话);
+    int insertCorrespond(Talk talk);
+
+    int insertContent(String theWord);
+
+    int afterInsert();
+
+    String selectAnswerByListenContent(String listenContent);
 }

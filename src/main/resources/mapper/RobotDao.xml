@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- 设置为IUserDao接口方法提供sql语句配置 -->
@@ -15,15 +15,33 @@
     <!--</select>-->
 
     <!--&lt;!&ndash;通过用户id查找用户信息&ndash;&gt;-->
-    <!--<select id="selectUser" resultType="User" parameterType="long">-->
-        <!--SELECT * FROM user WHERE id = #{id}-->
-    <!--</select>-->
+    <select id="selecttest" resultType="String">
+        SELECT content FROM conversation_content WHERE id = #{id}
+    </select>
+
+    <!--获取回答内容-->
+    <select id="selectAnswerByListenContent" resultType="String">
+        SELECT content FROM conversation_content WHERE id =
+        (SELECT back_id FROM talk WHERE come_id=
+        (SELECT id FROM conversation_content WHERE content=#{listenContent}))
+    </select>
 
     <!--&lt;!&ndash;<parameterMap id="" type=""&ndash;&gt;-->
+    <!--获取插入后的id-->
+    <select id="afterInsert" resultType="int" >
+        select @@IDENTITY;
+    </select>
     <!--注册新用户-->
-    <insert id="insertContent" parameterType="User">
+    <insert id="insertContent" >
           INSERT INTO conversation_content(content)VALUES
-          (一句话);
+          (#{theWord});
+
     </insert>
+    <!--关联关系-->
+    <insert id="insertCorrespond" >
+          INSERT INTO talk(come_id,back_id)VALUES
+          (#{inId},#{outId});
+    </insert>
+
 
 </mapper>
