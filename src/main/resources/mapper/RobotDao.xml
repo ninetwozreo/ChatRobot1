@@ -6,39 +6,127 @@
 
     <!--&lt;!&ndash;通过用户名查找对应的密码&ndash;&gt;-->
     <!--<select id="selectPasswordByUserName" resultType="String" parameterType="String">-->
-        <!--SELECT password FROM  USER  WHERE username=#{username}-->
+    <!--SELECT password FROM  USER  WHERE username=#{username}-->
     <!--</select>-->
 
     <!--&lt;!&ndash;用户名查找用户信息&ndash;&gt;-->
     <!--<select id="selectUserByName" resultType="User" parameterType="String">-->
-        <!--SELECT * FROM  USER WHERE username=#{username}-->
+    <!--SELECT * FROM  USER WHERE username=#{username}-->
     <!--</select>-->
-
+    <resultMap type="com.chatRobot.model.OneContent" id="answerContentList">
+        <id property="id" column="id"/>
+        <result property="words" column="words"/>
+        <result property="times" column="times"/>
+        <result property="fileId" column="file_id"/>
+    </resultMap>
+    <!--查询片段示例-->
+    <sql id="menuColumns">
+        a.id,
+        a.parent_id AS "parent.id",
+        a.parent_ids,
+        a.name,
+        a.href,
+        a.target,
+        a.icon,
+        a.sort,
+        a.is_show,
+        a.permission,
+        a.remarks,
+        a.create_by AS "createBy.id",
+        a.create_date,
+        a.update_by AS "updateBy.id",
+        a.update_date,
+        a.del_flag,
+        p.name AS "parent.name"
+    </sql>
     <!--&lt;!&ndash;通过用户id查找用户信息&ndash;&gt;-->
     <select id="selecttest" resultType="String">
         SELECT content FROM conversation_content WHERE id = #{id}
     </select>
+    <!--查找所有问题-->
+    <select id="selectQuestions" resultMap="answerContentList">
+        SELECT
+        id,
+        words,
+        file_id,
+        times
+        FROM
+        conversation_content
+        WHERE CHARACTERED=1
+    </select>
+    <!--插入时查询是否存在该问题-->
+    <select id="selectListenContentByListenContent" resultType="com.chatRobot.model.OneContent">
+        SELECT id ,words ,times,file_id
+        FROM conversation_content
+        WHERE words =#{listenContent}
+        AND CHARACTERED=0
+    </select>
+    <!--插入时查询是否存在该答案-->
+    <select id="selectAnswerContentByAnswerContent" resultType="com.chatRobot.model.OneContent">
+        SELECT id ,words ,times ,file_id
+        FROM conversation_content
+        WHERE words =#{answerContent}
+        AND CHARACTERED=0
+    </select>
 
     <!--获取回答内容-->
-    <select id="selectAnswerByListenContent" resultType="String">
-        SELECT content FROM conversation_content WHERE id =
-        (SELECT back_id FROM talk WHERE come_id=
-        (SELECT id FROM conversation_content WHERE content=#{listenContent}))
+    <select id="selectAnswerByListenContent" resultMap="answerContentList">
+        SELECT
+        id,
+        words,
+        file_id,
+        times
+        FROM
+        conversation_content
+        WHERE
+        id IN (
+        SELECT
+        back_id
+        FROM
+        talk
+        WHERE
+        come_id = (
+        SELECT
+        id
+        FROM
+        conversation_content
+        WHERE
+        words = #{listenContent} AND CHARACTERED=0 ))
     </select>
 
     <!--&lt;!&ndash;<parameterMap id="" type=""&ndash;&gt;-->
     <!--获取插入后的id-->
-    <select id="afterInsert" resultType="int" >
+    <select id="afterInsert" resultType="int">
         select @@IDENTITY;
     </select>
-    <!--注册新用户-->
-    <insert id="insertContent" >
-          INSERT INTO conversation_content(content)VALUES
-          (#{theWord});
+    <!--更新查询次数-->
+    <update id="updateOneContentTimes" parameterType="com.chatRobot.model.OneContent">
+        UPDATE conversation_content SET
+        times =#{times}
+        WHERE id= #{id}
+
+    </update>
+    <!--插入新的回答或问题-->
+    <insert id="insertContent" parameterType="com.chatRobot.model.OneContent"
+            useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO conversation_content
+        (words,
+        CHARACTERED,
+        file_id,
+        times)
+        VALUES
+        (#{words},
+        #{charatered},
+        #{fileId},
+        #{times})
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_insert_id() AS id;
+        </selectKey>
 
     </insert>
     <!--关联关系-->
-    <insert id="insertCorrespond" >
+    <insert id="insertCorrespond">
           INSERT INTO talk(come_id,back_id)VALUES
           (#{inId},#{outId});
     </insert>

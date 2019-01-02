@@ -2,35 +2,52 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <script src="static/js/jquery.js"></script>
+    <script src="js/index.js"></script>
+    <link rel="stylesheet" href="css/index.css"/>
+
     <title>test</title>
 </head>
-<script>
-    function selectUser() {
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                document.getElementById("test").innerHTML = xmlhttp.responseText;
-            }
-        }
-        xmlhttp.open("POST", "user/showUser.do", true);
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlhttp.send("id=1");
-    }
-</script>
+<!--<script>-->
+    <!--function selectUser() {-->
+        <!--var xmlhttp = new XMLHttpRequest();-->
+        <!--xmlhttp.onreadystatechange = function () {-->
+            <!--if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {-->
+                <!--document.getElementById("test").innerHTML = xmlhttp.responseText;-->
+            <!--}-->
+        <!--}-->
+        <!--xmlhttp.open("POST", "user/showUser.do", true);-->
+        <!--xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");-->
+        <!--xmlhttp.send("id=1");-->
+    <!--}-->
+<!--</script>-->
 <body>
 
+<div style="margin-left: 600px;margin-top: 300px">
+    <!--<button id="aaa" class="button-main" onclick="mmmmm()">talk</button>-->
+    <button id="talkButton" class="button-main" onclick="talk()">talk</button>
+    <button id="change" class="button-manage" style="display: none" onclick="changed()">notthis</button>
+    <button id="makeSure" class="button-manage" style="display: none" onclick="makeSure()">isthis</button>
+    <button id="learnButton" class="button-main" style="display: none" onclick="learn()">learn</button>
 
+    <form id="learn" action="jarvers/leaning" method="POST" target="aa">
+        <span class="span-only-font">I       say:</span><input class="input-learning" type="text"
+                                                               name="listenContent"><br>
+        <span class="span-only-font">SHOULD back:</span> <input class="input-learning" type="text" name="answerContent">
+        <input class="input-learning" type="file" name="answerContentFile">
+        <input type="submit" class="button-manage" value="learning" onclick="back()">
+    </form>
+    <iframe id="aa" style="display: none"></iframe>
 
-<form action="jarvers/leaning" method="POST">
-    say：   <input type="text" name="listenContent"><br>
-    back:      <input type="text" name="answerContent"><br>
-    <input type="submit" value="learning" onclick="back()">
-</form>
-<script>
-    // function back() {
-    //     alert()
-    // }
-    //
-</script>
+    <input  class="button-manage" value="find" onclick="findQuestions()">
+
+    <div id="talk" style="display:none">
+        <span class="span-only-font">say</span><input id="say" class="input-talk" type="text">
+        <button class="button-manage" onclick="answer()">REback</button>
+        <div style=" margin: 98px; position: relative;left: -100px;top: -100px">
+            <span class="span"> back  </span><span id="bac" style="color: deeppink"></span>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -1,0 +1,71 @@
+.button1{
+    width: 15%;
+    height: 10%;
+    border: wheat;
+    font-size: 22px;
+    background-color: cyan;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+}
+.button-main{
+    width: 25%;
+    height: 30px;
+    border: wheat;
+    font-size: 22px;
+    background-color: cyan;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+}
+.button-manage{
+    width: 20%;
+    height: 25px;
+    border: wheat;
+    font-size: 18px;
+    background-color: darksalmon;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+.span{
+    font-style: italic;
+    font-weight: 300;
+    font-family: fantasy;
+    height: 109px;
+    font-size: 30px;
+    margin-right: 10px;
+
+}
+.span-only-font{
+    font-style: italic;
+    font-weight: 300;
+    font-family: fantasy;
+    height: 109px;
+    font-size: 30px;
+    margin-right: 10px;
+
+}
+.input{
+    border-radius: 10px;
+    height: 25px;
+    width: 15%;
+    font-size: 20px;
+    font-family: cursive;
+
+}
+.input-learning{
+    border-radius: 10px;
+    height: 25px;
+    width: 75%;
+    font-size: 20px;
+    font-family: cursive;
+
+}
+.input-talk{
+    border-radius: 10px;
+    height: 25px;
+    width: 50%;
+    font-size: 20px;
+    font-family: cursive;
+}

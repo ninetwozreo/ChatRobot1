@@ -1,32 +1,28 @@
 package com.chatRobot.model;
 
 import java.util.Date;
+/**一次会话类**/
 
 public class Talk {
 
     private long id;
-    private int outId;
-    private int inId;
+    private long outId;
+    private long inId;
 
-    public int getOutId() {
+
+    public long getOutId() {
         return outId;
     }
 
-    public void setOutId(int outId) {
+    public void setOutId(long outId) {
         this.outId = outId;
     }
 
-
-
-
-    public int getInId() {
+    public long getInId() {
         return inId;
     }
 
-    public void setInId(int inId) {
+    public void setInId(long inId) {
         this.inId = inId;
     }
-
-
-
 }
