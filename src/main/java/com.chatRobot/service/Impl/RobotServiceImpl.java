@@ -68,7 +68,7 @@ public class RobotServiceImpl implements IRobotService {
             robotDao.updateOneContentTimes(askContent);
             answerContents = robotDao.selectAnswerByListenContent(listenContent);
         }else {
-            answerContents=new ArrayList<>();
+            answerContents=new ArrayList<OneContent>();
             askContent=new OneContent();
             askContent.setWords("这个没学过");
             answerContents.add(askContent);

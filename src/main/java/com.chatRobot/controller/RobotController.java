@@ -7,19 +7,17 @@ import com.centit.fileserver.client.po.FileStoreInfo;
 import com.chatRobot.model.LearningModel;
 import com.chatRobot.model.OneContent;
 import com.chatRobot.service.IRobotService;
-import com.chatRobot.utils.HttpUtils;
 import com.chatRobot.utils.PropertiesUtils;
 import com.chatRobot.utils.TalkUtils;
-//import com.mchange.v2.util.PropertiesUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import sun.reflect.misc.FieldUtil;
+
 
 import javax.annotation.Resource;
+import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -39,16 +37,17 @@ public class RobotController {
     @RequestMapping("/leaning")
     public void Learning(HttpServletRequest request, HttpServletResponse response, String listenContent, String answerContent) {
 //        userService.learning(listenContent,answerContent);
+        request.getParameter("data");
         OneContent listenContent0 = new OneContent();
         OneContent answerContent0 = new OneContent();
         listenContent0.setWords(listenContent);
         answerContent0.setWords(answerContent);
 
-        File file = TalkUtils.getFile(request);
-        if (file != null) {
+//        File file = TalkUtils.getFile(request);
+//        if (file != null) {
 //            answerContent0 = hasFile(answerContent0, file);//滴滴滴，当前默认为回答
-        }
-
+//        }
+        learningModel=new LearningModel();
         learningModel.setListenContent(listenContent0);
         learningModel.setAnswerContent(answerContent0);
         robotService.learning(listenContent0,  answerContent0);
@@ -62,7 +61,7 @@ public class RobotController {
         oneContents = robotService.Answer(listenContent);
         String url = "";
 //        request.setAttribute("back", oneContents);
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<String, Object>();
         //滴滴滴，考虑扩展成一次显示多个
         OneContent oneContent1 = TalkUtils.findTheBestOne(oneContents);
         if (oneContent1.getFileId() != null) {

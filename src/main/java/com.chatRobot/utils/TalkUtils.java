@@ -36,8 +36,8 @@ public class TalkUtils {
      */
     public static List<OneContent> findTheQuestions(OneContent oneContent, List<OneContent> allList) {
         String contentWord = oneContent.getWords();
-        List<String> contentWords = new ArrayList<>();
-        List<OneContent> backList = new ArrayList<>();
+        List<String> contentWords = new ArrayList<String>();
+        List<OneContent> backList = new ArrayList<OneContent>();
         //输入字数大于分辨率
         if (contentWord.length() > oneContent.getRatio()) {
             for (int i = 0; i < contentWord.length() - oneContent.getRatio(); i++) {
