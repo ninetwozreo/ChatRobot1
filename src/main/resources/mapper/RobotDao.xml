@@ -59,7 +59,7 @@
         SELECT id ,words ,times,file_id
         FROM conversation_content
         WHERE words =#{listenContent}
-        AND CHARACTERED=0
+        AND CHARACTERED =0
     </select>
     <!--插入时查询是否存在该答案-->
     <select id="selectAnswerContentByAnswerContent" resultType="com.chatRobot.model.OneContent">
@@ -113,11 +113,13 @@
         INSERT INTO conversation_content
         (words,
         CHARACTERED,
+        create_date,
         file_id,
         times)
         VALUES
         (#{words},
         #{charatered},
+        #{createDate},
         #{fileId},
         #{times})
         <selectKey keyProperty="id" order="AFTER" resultType="int">

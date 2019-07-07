@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service("robotService")
@@ -26,6 +27,7 @@ public class RobotServiceImpl implements IRobotService {
             askContent.setTimes(0);
             askContent.setCharatered(0);
             askContent.setWords(listenContent.getWords());
+            askContent.setCreateDate(new Date());
             robotDao.insertContent(askContent);
             idIn=askContent.getId();
         }else {
@@ -40,6 +42,7 @@ public class RobotServiceImpl implements IRobotService {
             answerContent.setTimes(0);
             answerContent.setCharatered(1);
             answerContent.setWords(backContent.getWords());
+            answerContent.setCreateDate(new Date());
             robotDao.insertContent(answerContent);
             idOut=answerContent.getId();
         }else {

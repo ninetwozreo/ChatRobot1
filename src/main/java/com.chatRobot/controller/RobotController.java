@@ -7,9 +7,11 @@ import com.centit.fileserver.client.po.FileStoreInfo;
 import com.chatRobot.model.LearningModel;
 import com.chatRobot.model.OneContent;
 import com.chatRobot.service.IRobotService;
+import com.chatRobot.utils.HttpUtils;
 import com.chatRobot.utils.PropertiesUtils;
 import com.chatRobot.utils.TalkUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -18,7 +20,9 @@ import javax.annotation.Resource;
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,16 +44,24 @@ public class RobotController {
         request.getParameter("data");
         OneContent listenContent0 = new OneContent();
         OneContent answerContent0 = new OneContent();
-        listenContent0.setWords(listenContent);
-        answerContent0.setWords(answerContent);
+        if(!StringUtils.isEmpty(listenContent)&&!StringUtils.isEmpty(answerContent)){
+            listenContent0.setWords(listenContent);
+            answerContent0.setWords(answerContent);
+            listenContent0.setCreateDate(new Date());
+            answerContent0.setCreateDate(new Date());
+        }else {
+            return ;
+        }
 
-//        File file = TalkUtils.getFile(request);
-//        if (file != null) {
-//            answerContent0 = hasFile(answerContent0, file);//滴滴滴，当前默认为回答
-//        }
+
+        File file = TalkUtils.getFile(request);
+        if (file != null) {
+            answerContent0 = hasFile(answerContent0, file);//滴滴滴，当前默认为回答
+        }
         learningModel=new LearningModel();
         learningModel.setListenContent(listenContent0);
         learningModel.setAnswerContent(answerContent0);
+
         robotService.learning(listenContent0,  answerContent0);
 
     }
@@ -145,21 +157,21 @@ public class RobotController {
     /**
      * 向文件服务器上传文件
      */
-//    private OneContent hasFile(OneContent oneContent, File file) {
-////        userService.learning(listenContent,answerContent);
-////        OneContent oneContent = new OneContent();
-//        FileStoreInfo fileStoreInfo1 = new FileStoreInfo();
-//        fileStoreInfo1.setFileName(file.getName());
-//        fileStoreInfo1.setFileType(file.getName().substring(file.getName().lastIndexOf(".") + 1));
-//        FileClient fileClient = HttpUtils.getFileClient();
-//        FileStoreInfo fileStoreInfo;
-//
-//        try {
-//            fileStoreInfo = fileClient.uploadFile(fileClient.getHttpClient(), fileStoreInfo1, file);
-//            oneContent.setFileId(fileStoreInfo.getFileId());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return oneContent;
-//    }
+    private OneContent hasFile(OneContent oneContent, File file) {
+//        userService.learning(listenContent,answerContent);
+//        OneContent oneContent = new OneContent();
+        FileStoreInfo fileStoreInfo1 = new FileStoreInfo();
+        fileStoreInfo1.setFileName(file.getName());
+        fileStoreInfo1.setFileType(file.getName().substring(file.getName().lastIndexOf(".") + 1));
+        FileClient fileClient = HttpUtils.getFileClient();
+        FileStoreInfo fileStoreInfo;
+
+        try {
+            fileStoreInfo = fileClient.uploadFile(fileClient.getHttpClient(), fileStoreInfo1, file);
+            oneContent.setFileId(fileStoreInfo.getFileId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return oneContent;
+    }
 }
