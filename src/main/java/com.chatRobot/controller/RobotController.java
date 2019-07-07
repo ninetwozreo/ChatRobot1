@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 
 import javax.annotation.Resource;
@@ -53,19 +54,24 @@ public class RobotController {
     public void Learning(HttpServletRequest request, HttpServletResponse response, String listenContent, String answerContent) {
 //        userService.learning(listenContent,answerContent);
         request.getParameter("data");
+
         OneContent listenContent0 = new OneContent();
         OneContent answerContent0 = new OneContent();
-        if(!StringUtils.isEmpty(listenContent)&&!StringUtils.isEmpty(answerContent)){
-            listenContent0.setWords(listenContent);
-            answerContent0.setWords(answerContent);
-            listenContent0.setCreateDate(new Date());
-            answerContent0.setCreateDate(new Date());
-        }else {
-            return ;
-        }
-
+//        if(!StringUtils.isEmpty(listenContent)&&!StringUtils.isEmpty(answerContent)){
+//            listenContent0.setWords(listenContent);
+//            answerContent0.setWords(answerContent);
+//            listenContent0.setCreateDate(new Date());
+//            answerContent0.setCreateDate(new Date());
+//        }else {
+//            return ;
+//        }
 
         File file = TalkUtils.getFile(request);
+        MultipartHttpServletRequest multipartHttpServletRequest = TalkUtils.getMultipartHttpServletRequest(request);
+        List<CommonsMultipartFile> multipartFile = TalkUtils.getMultipartFile(multipartHttpServletRequest);
+        JsonObject multipartParamters = TalkUtils.getMultipartParamters(multipartHttpServletRequest);
+
+
         if (file != null) {
             answerContent0 = hasFile(answerContent0, file);//滴滴滴，当前默认为回答
         }

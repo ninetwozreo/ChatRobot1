@@ -30,15 +30,11 @@
     <button id="makeSure" class="button-manage" style="display: none" onclick="makeSure()">isthis</button>
     <button id="learnButton" class="button-main" style="display: none" onclick="learn()">learn</button>
 
-    <form id="learn" action="jarvers/leaning" method="POST" target="aa" enctype="multipart/form-data">
-        <span class="span-only-font">I       say:</span>
-        <input class="input-learning" type="text"  name="listenContent"><br>
-        <span class="span-only-font">SHOULD back:</span>
-
-        <input class="input-learning" type="text" name="answerContent">
-
-        <!--<input class="input-learning" type="file" name="answerContentFile">-->
-        <input class="input-learning" type="file">
+    <form id="learn" action="jarvers/leaning" method="POST" enctype="multipart/form-data">
+        <span class="span-only-font">I       say:</span><input class="input-learning" type="text"
+                                                               name="listenContent"><br>
+        <span class="span-only-font">SHOULD back:</span> <input class="input-learning" type="text" name="answerContent">
+        <input class="input-learning" type="file" name="answerContentFile">
         <input type="submit" class="button-manage" value="learning" onclick="back()">
     </form>
     <iframe id="aa" style="display: none"></iframe>

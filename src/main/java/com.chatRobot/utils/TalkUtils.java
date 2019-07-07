@@ -11,6 +11,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
+import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.ArrayList;
@@ -111,6 +112,25 @@ public class TalkUtils {
             e.printStackTrace();
         }
         return file;
+    }
+
+
+    public static JsonObject getMultipartParamters(MultipartHttpServletRequest multiRequest) {
+        multiRequest.getParameter("");
+        return null;
+    }
+    public static List<CommonsMultipartFile> getMultipartFile(MultipartHttpServletRequest multiRequest) {
+        Map<String, MultipartFile> map = multiRequest.getFileMap();
+        List<CommonsMultipartFile> listFile=new ArrayList<>();
+        for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
+            CommonsMultipartFile cMultipartFile = (CommonsMultipartFile) entry.getValue();
+            listFile.add(cMultipartFile);
+        }
+        return listFile;
+    }
+    public static MultipartHttpServletRequest getMultipartHttpServletRequest(HttpServletRequest request) {
+        MultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+        return resolver.resolveMultipart(request);
     }
 
     public static CommonsMultipartFile fileUploadOne(HttpServletRequest request) {
