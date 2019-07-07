@@ -4,16 +4,24 @@ package com.chatRobot.controller;
 //import com.centit.fileserver.client.po.FileStoreInfo;
 import com.centit.fileserver.client.FileClient;
 import com.centit.fileserver.client.po.FileStoreInfo;
+import com.centit.fileserver.utils.FileStore;
+import com.centit.framework.common.JsonResultUtils;
+import com.centit.support.file.FileIOOpt;
+import com.centit.support.file.FileMD5Maker;
+import com.centit.support.file.FileSystemOpt;
 import com.chatRobot.model.LearningModel;
 import com.chatRobot.model.OneContent;
 import com.chatRobot.service.IRobotService;
 import com.chatRobot.utils.HttpUtils;
 import com.chatRobot.utils.PropertiesUtils;
 import com.chatRobot.utils.TalkUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 import javax.annotation.Resource;
@@ -23,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +40,10 @@ import java.util.Map;
 @RequestMapping("/jarvers")
 public class RobotController {
 
+
     @Resource
     private IRobotService robotService;
+    private FileStore fileStore;
     private List<OneContent> oneContents;
     private List<OneContent> questionList;
     private OneContent oneContent;
@@ -173,5 +184,35 @@ public class RobotController {
             e.printStackTrace();
         }
         return oneContent;
+    }
+    public void uploadFile(HttpServletRequest request)
+            throws IOException {
+        request.setCharacterEncoding("utf8");
+        String tempFilePath = PropertiesUtils.getThe("filePath");
+        Map<String, String[]> parameterMap ;
+
+        MultipartHttpServletRequest multiRequest= HttpUtils.getMultiRequest(request);
+
+
+        try {
+            Pair<String, InputStream> fileInfo = HttpUtils.fetchInputStreamFromRequest(multiRequest);
+            parameterMap=multiRequest.getParameterMap();
+            int fileSize = FileIOOpt.writeInputStreamToFile(fileInfo.getRight(), tempFilePath);
+            String fileMd5 = FileMD5Maker.makeFileMD5(new File(tempFilePath));
+            //FileStore fs = FileStoreFactory.createDefaultFileStore();
+//            Map<String, String[]> parameterMap = new CommonsMultipartResolver(request.getSession().getServletContext()).resolveMultipart(request).getParameterMap();
+            fileStore.saveFile(tempFilePath);
+
+            String fileId = fileMd5 + "_" + String.valueOf(fileSize) ;
+
+//            completedStoreFile(fileStore, fileMd5, fileSize, fileInfo.getLeft(), response);
+            FileSystemOpt.deleteFile(tempFilePath);
+//            SaveOptStuInfo(fileId,fileMd5,fileInfo.getLeft(),parameterMap.get("nodeInstId")[0]);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+//            logger.error(e.getMessage(), e);
+//            JsonResultUtils.writeErrorMessageJson(e.getMessage(), response);
+        }
     }
 }

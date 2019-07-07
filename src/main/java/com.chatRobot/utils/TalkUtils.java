@@ -2,6 +2,7 @@ package com.chatRobot.utils;
 
 import com.chatRobot.model.OneContent;
 import org.apache.commons.io.FileUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
@@ -95,9 +96,14 @@ public class TalkUtils {
         //获取前台上传的文件
         CommonsMultipartFile items = fileUploadOne(request);
         //设置路径
+        String originalFilename = items.getOriginalFilename();
+
+        if (StringUtils.isEmpty(originalFilename)){
+            return null;
+        }
         String path = request.getSession().getServletContext().getRealPath("")
                 + File.separator + "ofd" + File.separator;//+usercode+File.separator
-        File file = new File(path + items.getOriginalFilename());
+        File file = new File(path + originalFilename);
         //转换成file，生成虚拟文件，成功之后，删除文件放在finally中
         try {
             FileUtils.copyInputStreamToFile(items.getInputStream(), file);

@@ -7,12 +7,24 @@ import java.util.Properties;
 //
 public class PropertiesUtils {
     /**
-     *
+     *配置文件获取
      */
+    private  static Properties properties;
+
+    public PropertiesUtils() {
+
+    }
+
+
     public static String getThe(String key) {
-        Properties properties=new Properties();
+        if(properties==null){
+            properties =new Properties();
+
+        }
+
         try {
-            properties.load(new InputStreamReader(Object.class.getResourceAsStream("/the.properties"),"UTF-8"));
+            properties.load(new InputStreamReader(Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream("the.properties"),"UTF-8"));
         } catch (IOException e) {
             e.printStackTrace();
         }
