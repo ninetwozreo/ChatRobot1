@@ -1,5 +1,6 @@
 package com.chatRobot.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.chatRobot.model.OneContent;
 import org.apache.commons.io.FileUtils;
 import org.springframework.util.StringUtils;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 //
 public class TalkUtils {
@@ -97,28 +100,40 @@ public class TalkUtils {
         //获取前台上传的文件
         CommonsMultipartFile items = fileUploadOne(request);
         //设置路径
-        String originalFilename = items.getOriginalFilename();
-
-        if (StringUtils.isEmpty(originalFilename)){
-            return null;
-        }
         String path = request.getSession().getServletContext().getRealPath("")
                 + File.separator + "ofd" + File.separator;//+usercode+File.separator
-        File file = new File(path + originalFilename);
+      return   CommonsMultipartFileToFile(path,items);
+    }
+
+    public  static File CommonsMultipartFileToFile(String tagetPath,CommonsMultipartFile commonsMultipartFile){
+        String originalFilename = commonsMultipartFile.getOriginalFilename();
+
+        if (StringUtils.isEmpty(originalFilename)){
+            log.print("未获取到文件名！");
+            return  null;
+        }
+        File file = new File(tagetPath + originalFilename);
         //转换成file，生成虚拟文件，成功之后，删除文件放在finally中
         try {
-            FileUtils.copyInputStreamToFile(items.getInputStream(), file);
+            FileUtils.copyInputStreamToFile(commonsMultipartFile.getInputStream(), file);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return file;
     }
 
-
-    public static JsonObject getMultipartParamters(MultipartHttpServletRequest multiRequest) {
+    public static JSONObject getMultipartParamters(MultipartHttpServletRequest multiRequest) {
         multiRequest.getParameter("");
-        return null;
+        JSONObject jsonObject=new JSONObject();
+        Iterator<String> iterator = multiRequest.getParameterMap().keySet().iterator();
+        while (iterator.hasNext()){
+            String nextKey = iterator.next();
+            jsonObject.put(nextKey,multiRequest.getParameter(nextKey));
+        }
+
+        return jsonObject;
     }
+
     public static List<CommonsMultipartFile> getMultipartFile(MultipartHttpServletRequest multiRequest) {
         Map<String, MultipartFile> map = multiRequest.getFileMap();
         List<CommonsMultipartFile> listFile=new ArrayList<>();
