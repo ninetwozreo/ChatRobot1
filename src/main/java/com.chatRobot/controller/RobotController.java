@@ -53,7 +53,7 @@ public class RobotController {
     private LearningModel learningModel;
     {
         if(fileStore==null){
-            fileStore=new OsFileStore();
+            fileStore=new OsFileStore(PropertiesUtils.getThe("fileRoot"));
         }
     }
     @RequestMapping("/leaning")
@@ -186,14 +186,6 @@ public class RobotController {
      * 向文件服务器上传文件
      */
     private OneContent hasFile(OneContent oneContent, MultipartHttpServletRequest multiRequest) {
-//        userService.learning(listenContent,answerContent);
-//        OneContent oneContent = new OneContent();
-//        FileStoreInfo fileStoreInfo1 = new FileStoreInfo();
-//        fileStoreInfo1.setFileName(file.getName());
-//        fileStoreInfo1.setFileType(file.getName().substring(file.getName().lastIndexOf(".") + 1));
-//        FileClient fileClient = HttpUtils.getFileClient();
-//        FileStoreInfo fileStoreInfo;
-//        String tempFilePath = PropertiesUtils.getThe("filePath");
         String tempFilePath = SystemTempFileUtils.getRandomTempFilePath();
 
         try {
@@ -201,6 +193,7 @@ public class RobotController {
 //            FileUtils.forceMkdir(new File(tempFilePath));
             int fileSize = FileIOOpt.writeInputStreamToFile(fileInfo.getRight(), tempFilePath);
             String fileMd5 = FileMD5Maker.makeFileMD5(new File(tempFilePath));
+
             fileStore.saveFile(tempFilePath);
 
             String fileId = fileMd5 + "_" + String.valueOf(fileSize);
