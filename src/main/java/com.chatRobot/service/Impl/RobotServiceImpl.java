@@ -23,10 +23,10 @@ public class RobotServiceImpl implements IRobotService {
         OneContent askContent=robotDao.selectListenContentByListenContent(listenContent.getWords());
         OneContent answerContent=robotDao.selectAnswerContentByAnswerContent(backContent.getWords());
         if(askContent==null){
-            askContent=new OneContent();
+            askContent=listenContent;
             askContent.setTimes(0);
             askContent.setCharatered(0);
-            askContent.setWords(listenContent.getWords());
+//            askContent.setWords(listenContent.getWords());
             askContent.setCreateDate(new Date());
             robotDao.insertContent(askContent);
             idIn=askContent.getId();
@@ -38,10 +38,10 @@ public class RobotServiceImpl implements IRobotService {
             idIn=askContent.getId();
         }
         if (answerContent==null){
-            answerContent=new OneContent();
+            answerContent=backContent;
             answerContent.setTimes(0);
             answerContent.setCharatered(1);
-            answerContent.setWords(backContent.getWords());
+//            answerContent.setWords(backContent.getWords());
             answerContent.setCreateDate(new Date());
             robotDao.insertContent(answerContent);
             idOut=answerContent.getId();

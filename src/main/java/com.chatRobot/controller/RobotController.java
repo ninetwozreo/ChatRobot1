@@ -7,6 +7,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.centit.fileserver.client.FileClient;
 import com.centit.fileserver.client.po.FileStoreInfo;
 import com.centit.fileserver.utils.FileStore;
+import com.centit.fileserver.utils.OsFileStore;
+import com.centit.fileserver.utils.SystemTempFileUtils;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.support.file.FileIOOpt;
 import com.centit.support.file.FileMD5Maker;
@@ -17,6 +19,7 @@ import com.chatRobot.service.IRobotService;
 import com.chatRobot.utils.HttpUtils;
 import com.chatRobot.utils.PropertiesUtils;
 import com.chatRobot.utils.TalkUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,7 +51,11 @@ public class RobotController {
     private List<OneContent> questionList;
     private OneContent oneContent;
     private LearningModel learningModel;
-
+    {
+        if(fileStore==null){
+            fileStore=new OsFileStore();
+        }
+    }
     @RequestMapping("/leaning")
     public void Learning(HttpServletRequest request, HttpServletResponse response, String listenContent, String answerContent) {
 //        userService.learning(listenContent,answerContent);
@@ -67,18 +74,18 @@ public class RobotController {
 
 //        File file = TalkUtils.getFile(request);
         MultipartHttpServletRequest multipartHttpServletRequest = TalkUtils.getMultipartHttpServletRequest(request);
-        List<CommonsMultipartFile> multipartFile = TalkUtils.getMultipartFile(multipartHttpServletRequest);
+//        List<CommonsMultipartFile> multipartFile = TalkUtils.getMultipartFile(multipartHttpServletRequest);
         JSONObject multipartParamters = TalkUtils.getMultipartParamters(multipartHttpServletRequest);
 
         listenContent0.setWords(multipartParamters.get("listenContent").toString());
-        answerContent0.setWords(multipartParamters.get("answerContent0").toString());
+        answerContent0.setWords(multipartParamters.get("answerContent").toString());
 
 
-        if (multipartFile != null && multipartFile.size() == 1) {
-            File file = TalkUtils.CommonsMultipartFileToFile(PropertiesUtils.getThe("filePath"), multipartFile.get(0));
+//        if (multipartFile != null && multipartFile.size() == 1) {
+//            File file = TalkUtils.CommonsMultipartFileToFile(PropertiesUtils.getThe("filePath"), multipartFile.get(0));
             answerContent0 = hasFile(answerContent0,
-                    file);//滴滴滴，当前默认为回答
-        }
+                    multipartHttpServletRequest);//滴滴滴，当前默认为回答
+//        }
         learningModel = new LearningModel();
         learningModel.setListenContent(listenContent0);
         learningModel.setAnswerContent(answerContent0);
@@ -178,18 +185,28 @@ public class RobotController {
     /**
      * 向文件服务器上传文件
      */
-    private OneContent hasFile(OneContent oneContent, File file) {
+    private OneContent hasFile(OneContent oneContent, MultipartHttpServletRequest multiRequest) {
 //        userService.learning(listenContent,answerContent);
 //        OneContent oneContent = new OneContent();
-        FileStoreInfo fileStoreInfo1 = new FileStoreInfo();
-        fileStoreInfo1.setFileName(file.getName());
-        fileStoreInfo1.setFileType(file.getName().substring(file.getName().lastIndexOf(".") + 1));
-        FileClient fileClient = HttpUtils.getFileClient();
-        FileStoreInfo fileStoreInfo;
+//        FileStoreInfo fileStoreInfo1 = new FileStoreInfo();
+//        fileStoreInfo1.setFileName(file.getName());
+//        fileStoreInfo1.setFileType(file.getName().substring(file.getName().lastIndexOf(".") + 1));
+//        FileClient fileClient = HttpUtils.getFileClient();
+//        FileStoreInfo fileStoreInfo;
+//        String tempFilePath = PropertiesUtils.getThe("filePath");
+        String tempFilePath = SystemTempFileUtils.getRandomTempFilePath();
 
         try {
-            fileStoreInfo = fileClient.uploadFile(fileClient.getHttpClient(), fileStoreInfo1, file);
-            oneContent.setFileId(fileStoreInfo.getFileId());
+            Pair<String, InputStream> fileInfo = HttpUtils.fetchInputStreamFromRequest(multiRequest);
+//            FileUtils.forceMkdir(new File(tempFilePath));
+            int fileSize = FileIOOpt.writeInputStreamToFile(fileInfo.getRight(), tempFilePath);
+            String fileMd5 = FileMD5Maker.makeFileMD5(new File(tempFilePath));
+            fileStore.saveFile(tempFilePath);
+
+            String fileId = fileMd5 + "_" + String.valueOf(fileSize);
+
+            oneContent.setFileId(fileId);
+            FileSystemOpt.deleteFile(tempFilePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
