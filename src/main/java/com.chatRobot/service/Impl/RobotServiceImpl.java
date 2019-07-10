@@ -1,5 +1,7 @@
 package com.chatRobot.service.Impl;
 
+import com.centit.fileserver.client.po.FileStoreInfo;
+import com.centit.support.file.FileType;
 import com.chatRobot.dao.IRobotDao;
 import com.chatRobot.model.OneContent;
 import com.chatRobot.model.Talk;
@@ -7,6 +9,7 @@ import com.chatRobot.service.IRobotService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -96,6 +99,24 @@ public class RobotServiceImpl implements IRobotService {
     @Override
     public List<OneContent> getQuestions() {
         return robotDao.selectQuestions();
+    }
+
+    @Override
+    public void saveFileMsg(String fileId, String fileMd5, long fileSize, String fileName) {
+        FileStoreInfo fileStoreInfo=new FileStoreInfo();
+        fileStoreInfo.setFileId(fileId);
+        fileStoreInfo.setFileName(fileName);
+        fileStoreInfo.setFileSize(fileSize);
+        fileStoreInfo.setFileMd5(fileMd5);
+        fileStoreInfo.setDownloadTimes(0L);
+        fileStoreInfo.setCreateTime(new Date());
+        try {
+            fileStoreInfo.setFileType(FileType.getFileType(fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        robotDao.saveFileMsg(fileStoreInfo);
+
     }
 
 }

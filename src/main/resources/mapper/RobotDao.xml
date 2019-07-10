@@ -106,6 +106,28 @@
         WHERE id= #{id}
 
     </update>
+    <!--插入新的文件信息-->
+    <insert id="saveFileMsg" parameterType="com.centit.fileserver.client.po.FileStoreInfo"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO file_msg
+        (file_id,
+        file_name,
+        create_date,
+        file_type,
+        download_times,
+        file_size,
+        file_unit,
+        file_md5)
+        VALUES
+        (#{fileId},
+        #{fileName},
+        #{createTime},
+        #{fileType},
+        #{downloadTimes},
+        #{fileSize},
+        #{fileUnit},
+        #{fileMd5})
+    </insert>
     <!--插入新的回答或问题-->
     <insert id="insertContent" parameterType="com.chatRobot.model.OneContent"
             useGeneratedKeys="true" keyProperty="id">

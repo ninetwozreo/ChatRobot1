@@ -13,4 +13,6 @@ public interface IRobotService {
     int makeSureTheAnswer(OneContent answerContent);
 
     List<OneContent> getQuestions();
+
+    void saveFileMsg(String fileId, String fileMd5, long fileSize, String fileName);
 }

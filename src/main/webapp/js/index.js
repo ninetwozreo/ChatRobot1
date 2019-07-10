@@ -39,6 +39,14 @@ function findQuestions() {
     });
 
 }
+//判断字符是否为空的方法
+function isEmpty(obj){
+    if(typeof obj == "undefined" || obj == null || obj == ""){
+        return true;
+    }else{
+        return false;
+    }
+}
 function answer() {
     var word = document.getElementById("say").value;
     $.ajax({
@@ -47,6 +55,12 @@ function answer() {
         dataType: "json",
         contentType: "application/json",
         success: function (data) {
+            debugger
+            if(!isEmpty(data.fileId)){
+                var  a=document.getElementById("fileDownload")
+                a.innerHTML=data.fileName;
+                a.href="jarvers/download/"+data.fileId+"?fileName="+data.fileName
+            }
             document.getElementById("bac").innerHTML = data.back;
             // if (data != null && data.data != null && data.data.length > 0) {
             //     $.each(data.data, function (i, v) {

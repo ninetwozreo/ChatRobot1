@@ -2,7 +2,7 @@
 //
 //import com.centit.fileserver.utils.FileStore;
 //import com.centit.fileserver.utils.UploadDownloadUtils;
-//import com.centit.framework.core.controller.BaseController;
+////import com.centit.framework.core.controller.BaseController;
 //import com.centit.support.algorithm.NumberBaseOpt;
 //import org.apache.commons.lang3.StringUtils;
 //import org.slf4j.Logger;
@@ -20,7 +20,7 @@
 //
 //@Controller
 //@RequestMapping("/download")
-//public class DownloadController extends BaseController {
+//public class DownloadController {
 //
 //    private static final Logger logger = LoggerFactory.getLogger(DownloadController.class);
 //

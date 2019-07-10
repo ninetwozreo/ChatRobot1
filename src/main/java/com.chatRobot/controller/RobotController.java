@@ -9,7 +9,9 @@ import com.centit.fileserver.client.po.FileStoreInfo;
 import com.centit.fileserver.utils.FileStore;
 import com.centit.fileserver.utils.OsFileStore;
 import com.centit.fileserver.utils.SystemTempFileUtils;
+import com.centit.fileserver.utils.UploadDownloadUtils;
 import com.centit.framework.common.JsonResultUtils;
+import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.file.FileIOOpt;
 import com.centit.support.file.FileMD5Maker;
 import com.centit.support.file.FileSystemOpt;
@@ -24,7 +26,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -99,18 +103,21 @@ public class RobotController {
     public Map<String, Object> Talking(HttpServletRequest request, HttpServletResponse response, String listenContent) throws IOException {
 //        userService.learning(listenContent,oneContent);
         oneContents = robotService.Answer(listenContent);
-        String url = "";
+        String fileId = "";
 //        request.setAttribute("back", oneContents);
         Map<String, Object> result = new HashMap<String, Object>();
         //滴滴滴，考虑扩展成一次显示多个
         OneContent oneContent1 = TalkUtils.findTheBestOne(oneContents);
         if (oneContent1.getFileId() != null) {
-            url = downloadFile(oneContent1.getFileId());
+//            url = downloadFile(oneContent1.getFileId());
+            fileId=oneContent1.getFileId();
         }
         oneContent = oneContent1;
 //        oneContents.remove(oneContent1);
         result.put("back", oneContent1.getWords());
-        result.put("url", url);//若有文件则url不为空
+        result.put("fileId", fileId);//若有文件则id不为空
+        result.put("fileName", "51.sql");//若有文件则id不为空
+
 //        result.put("all", oneContents);
 //        renderJson(result);
 //        response.setStatus(200);
@@ -122,6 +129,7 @@ public class RobotController {
     }
 
     private String downloadFile(String fileId) {
+
         return PropertiesUtils.getThe("fileserver") + "/service/download/pfile/" + fileId;
     }
 
@@ -168,7 +176,6 @@ public class RobotController {
     public Map<String, Object> getSimilerQuestions(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String word = request.getParameter("questionWord");
-//        int ratio = Integer.parseInt(request.getParameter("ratio"));
         oneContent = new OneContent();
         oneContent.setWords(word);
         oneContent.setRatio(100);
@@ -191,13 +198,14 @@ public class RobotController {
         try {
             Pair<String, InputStream> fileInfo = HttpUtils.fetchInputStreamFromRequest(multiRequest);
 //            FileUtils.forceMkdir(new File(tempFilePath));
-            int fileSize = FileIOOpt.writeInputStreamToFile(fileInfo.getRight(), tempFilePath);
+            long fileSize = FileIOOpt.writeInputStreamToFile(fileInfo.getRight(), tempFilePath);
             String fileMd5 = FileMD5Maker.makeFileMD5(new File(tempFilePath));
 
             fileStore.saveFile(tempFilePath);
 
             String fileId = fileMd5 + "_" + String.valueOf(fileSize);
 
+            saveFileMsg(fileId,fileMd5,fileSize,fileInfo.getLeft());
             oneContent.setFileId(fileId);
             FileSystemOpt.deleteFile(tempFilePath);
         } catch (IOException e) {
@@ -206,34 +214,78 @@ public class RobotController {
         return oneContent;
     }
 
-    public void uploadFile(HttpServletRequest request)
-            throws IOException {
-        request.setCharacterEncoding("utf8");
-        String tempFilePath = PropertiesUtils.getThe("filePath");
-        Map<String, String[]> parameterMap;
-
-        MultipartHttpServletRequest multiRequest = HttpUtils.getMultiRequest(request);
-
-
-        try {
-            Pair<String, InputStream> fileInfo = HttpUtils.fetchInputStreamFromRequest(multiRequest);
-            parameterMap = multiRequest.getParameterMap();
-            int fileSize = FileIOOpt.writeInputStreamToFile(fileInfo.getRight(), tempFilePath);
-            String fileMd5 = FileMD5Maker.makeFileMD5(new File(tempFilePath));
-            //FileStore fs = FileStoreFactory.createDefaultFileStore();
-//            Map<String, String[]> parameterMap = new CommonsMultipartResolver(request.getSession().getServletContext()).resolveMultipart(request).getParameterMap();
-            fileStore.saveFile(tempFilePath);
-
-            String fileId = fileMd5 + "_" + String.valueOf(fileSize);
-
-//            completedStoreFile(fileStore, fileMd5, fileSize, fileInfo.getLeft(), response);
-            FileSystemOpt.deleteFile(tempFilePath);
-//            SaveOptStuInfo(fileId,fileMd5,fileInfo.getLeft(),parameterMap.get("nodeInstId")[0]);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-//            logger.error(e.getMessage(), e);
-//            JsonResultUtils.writeErrorMessageJson(e.getMessage(), response);
-        }
+    private void saveFileMsg(String fileId, String fileMd5, long fileSize, String fileName) {
+        robotService.saveFileMsg(fileId,fileMd5,fileSize,fileName);
     }
+
+    /**
+     * 根据文件的 MD5码 下载不受保护的文件，不需要访问文件记录
+     * 如果是通过 store 上传的需要指定 extName 扩展名
+     * @param md5SizeExt 文件的Md5码和文件的大小 格式为 MD5_SIZE.EXT
+     * @param fileName 文件的名称包括扩展名，如果这个不为空， 上面的 md5SizeExt 可以没有 .Ext 扩展名
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @throws IOException IOException
+     */
+    @RequestMapping(value= "/download/{md5SizeExt}", method= RequestMethod.GET)
+    public void downloadUnprotectedFile(@PathVariable("md5SizeExt") String md5SizeExt,
+                                        String fileName,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response) throws IOException {
+        //FileStoreInfo stroeInfo = fileStoreInfoManager.getObjectById(md5);
+        //downloadFile(stroeInfo,request,response);
+        String uri = request.getRequestURI();
+        String [] urips = uri.split("/");
+        int n=urips.length;
+        if(org.apache.commons.lang3.StringUtils.isBlank(fileName)){
+            fileName = urips[n-1];
+        }
+        String fileMd5 =  md5SizeExt.substring(0,32);
+        int pos = md5SizeExt.indexOf('.');
+        //String extName = md5SizeExt.substring(pos);
+        long fileSize = pos<0? NumberBaseOpt.parseLong(md5SizeExt.substring(33),0l)
+                : NumberBaseOpt.parseLong(md5SizeExt.substring(33,pos),0l);
+
+        String filePath = fileStore.getFileStoreUrl(fileMd5, fileSize);
+        InputStream inputStream = fileStore.loadFileStream(filePath);
+        downFileRange(request,  response,
+                inputStream, fileSize,
+                fileName);
+    }
+    private static void downFileRange(HttpServletRequest request, HttpServletResponse response,
+                                      InputStream inputStream,long fSize, String fileName)
+            throws IOException {
+        UploadDownloadUtils.downFileRange(request, response,
+                inputStream, fSize, fileName);
+    }
+//    public void uploadFile(HttpServletRequest request)
+//            throws IOException {
+//        request.setCharacterEncoding("utf8");
+//        String tempFilePath = PropertiesUtils.getThe("filePath");
+//        Map<String, String[]> parameterMap;
+//
+//        MultipartHttpServletRequest multiRequest = HttpUtils.getMultiRequest(request);
+//
+//
+//        try {
+//            Pair<String, InputStream> fileInfo = HttpUtils.fetchInputStreamFromRequest(multiRequest);
+//            parameterMap = multiRequest.getParameterMap();
+//            int fileSize = FileIOOpt.writeInputStreamToFile(fileInfo.getRight(), tempFilePath);
+//            String fileMd5 = FileMD5Maker.makeFileMD5(new File(tempFilePath));
+//            //FileStore fs = FileStoreFactory.createDefaultFileStore();
+////            Map<String, String[]> parameterMap = new CommonsMultipartResolver(request.getSession().getServletContext()).resolveMultipart(request).getParameterMap();
+//            fileStore.saveFile(tempFilePath);
+//
+//            String fileId = fileMd5 + "_" + String.valueOf(fileSize);
+//
+////            completedStoreFile(fileStore, fileMd5, fileSize, fileInfo.getLeft(), response);
+//            FileSystemOpt.deleteFile(tempFilePath);
+////            SaveOptStuInfo(fileId,fileMd5,fileInfo.getLeft(),parameterMap.get("nodeInstId")[0]);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+////            logger.error(e.getMessage(), e);
+////            JsonResultUtils.writeErrorMessageJson(e.getMessage(), response);
+//        }
+//    }
 }
