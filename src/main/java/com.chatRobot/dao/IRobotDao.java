@@ -48,4 +48,6 @@ public interface IRobotDao {
 
     //保存文件信息
     void saveFileMsg(FileStoreInfo fileStoreInfo);
+    //获取文件信息
+    FileStoreInfo getFileMsgById(String fileId);
 }

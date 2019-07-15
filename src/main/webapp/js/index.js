@@ -60,8 +60,19 @@ function answer() {
                 var  a=document.getElementById("fileDownload")
                 a.innerHTML=data.fileName;
                 a.href="jarvers/download/"+data.fileId+"?fileName="+data.fileName
+                document.getElementById("bac").innerHTML = data.back;
+            }else if(!isEmpty(data.fileList)){
+                var list=data.fileList;
+                debugger
+
+                for (var  i=0;i<list.length;i++){
+                    var  a=document.createElement("a");
+                    a.innerHTML=list[i].fileName
+                    a.href="jarvers/download/"+list[i].fileId+"?fileName="+list[i].fileName
+                    document.getElementById("fileDownload").appendChild(a)
+                    document.getElementById("fileDownload").appendChild(document.createElement("br"))
+                }
             }
-            document.getElementById("bac").innerHTML = data.back;
             // if (data != null && data.data != null && data.data.length > 0) {
             //     $.each(data.data, function (i, v) {
             //         self.list.push(v);

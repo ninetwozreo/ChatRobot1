@@ -119,4 +119,9 @@ public class RobotServiceImpl implements IRobotService {
 
     }
 
+    @Override
+    public FileStoreInfo getFileMsgById(String fileId) {
+       return robotDao.getFileMsgById(fileId);
+    }
+
 }

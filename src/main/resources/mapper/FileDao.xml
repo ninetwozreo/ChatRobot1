@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- IFileDao -->
+<mapper namespace="com.chatRobot.dao.IFileDao">
+    <resultMap type="com.centit.fileserver.client.po.FileStoreInfo" id="fileStoreInfoMap">
+        <id property="fileId" column="file_id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="fileType" column="file_type"/>
+        <result property="downloadTimes" column="download_times"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileUnit" column="file_unit"/>
+        <result property="fileMd5" column="file_md5"/>
+        <result property="osId" column="os_id"/>
+    </resultMap>
+    <!--获取所有文件信息-->
+    <select id="listAllFile" resultMap="fileStoreInfoMap">
+      SELECT file_id ,file_name ,download_times,create_time,
+       file_size,os_id,file_md5,file_type,file_unit
+       FROM file_msg WHERE 1=1
+    </select>
+
+</mapper>

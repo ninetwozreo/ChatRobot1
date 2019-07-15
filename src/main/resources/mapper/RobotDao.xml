@@ -19,6 +19,18 @@
         <result property="times" column="times"/>
         <result property="fileId" column="file_id"/>
     </resultMap>
+    <!--文件信息-->
+    <resultMap type="com.centit.fileserver.client.po.FileStoreInfo" id="fileStoreInfoMap">
+        <id property="fileId" column="file_id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="fileType" column="file_type"/>
+        <result property="downloadTimes" column="download_times"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileUnit" column="file_unit"/>
+        <result property="fileMd5" column="file_md5"/>
+        <result property="osId" column="os_id"/>
+    </resultMap>
     <!--查询片段示例-->
     <sql id="menuColumns">
         a.id,
@@ -69,6 +81,16 @@
         AND CHARACTERED=0
     </select>
 
+    <!--&lt;!&ndash;获取文件信息&ndash;&gt;-->
+    <!--<select id="getFileMsgById"  resultMap="fileStoreInfoMap"><-->
+    <!--获取文件信息-->
+    <select id="getFileMsgById"  resultMap="fileStoreInfoMap">
+SELECT file_id ,file_name ,download_times,create_time, file_size,os_id,file_md5,file_type,file_unit FROM file_msg
+ WHERE file_id=#{fileId}
+
+
+
+    </select>
     <!--获取回答内容-->
     <select id="selectAnswerByListenContent" resultMap="answerContentList">
         SELECT
@@ -112,7 +134,7 @@
         INSERT INTO file_msg
         (file_id,
         file_name,
-        create_date,
+        create_time,
         file_type,
         download_times,
         file_size,
@@ -135,7 +157,7 @@
         INSERT INTO conversation_content
         (words,
         CHARACTERED,
-        create_date,
+        create_time,
         file_id,
         times)
         VALUES

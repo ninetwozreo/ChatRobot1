@@ -2,7 +2,11 @@ package com.chatRobot.model;
 
 //import com.chatRobot.commons.po.BasePo;
 
+import com.centit.fileserver.client.po.FileStoreInfo;
+
+import java.nio.file.FileStore;
 import java.util.Date;
+import java.util.List;
 
 /**created by shark 2018-9-11
  * 会话或返回内容类**/
@@ -18,12 +22,22 @@ public class OneContent {
     private int charatered;
     //文件相关
     private String fileId;
+    //
+//    private List<FileStoreInfo> fileMsg;
     //类型（words：语言；file：文件）
     private String types;
     //查找分辨率
     private int ratio;
     //创建时间
     private Date createDate;
+
+//    public List<FileStoreInfo> getFileMsg() {
+//        return fileMsg;
+//    }
+
+//    public void setFileMsg(List<FileStoreInfo> fileMsg) {
+//        this.fileMsg = fileMsg;
+//    }
 
     public Date getCreateDate() {
         return createDate;

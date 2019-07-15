@@ -17,6 +17,7 @@ import com.centit.support.file.FileMD5Maker;
 import com.centit.support.file.FileSystemOpt;
 import com.chatRobot.model.LearningModel;
 import com.chatRobot.model.OneContent;
+import com.chatRobot.service.IFileService;
 import com.chatRobot.service.IRobotService;
 import com.chatRobot.utils.HttpUtils;
 import com.chatRobot.utils.PropertiesUtils;
@@ -47,7 +48,8 @@ import java.io.InputStream;
 @RequestMapping("/jarvers")
 public class RobotController {
 
-
+    @Resource
+    private IFileService fileService;
     @Resource
     private IRobotService robotService;
     private FileStore fileStore;
@@ -55,11 +57,13 @@ public class RobotController {
     private List<OneContent> questionList;
     private OneContent oneContent;
     private LearningModel learningModel;
+
     {
-        if(fileStore==null){
-            fileStore=new OsFileStore(PropertiesUtils.getThe("fileRoot"));
+        if (fileStore == null) {
+            fileStore = new OsFileStore(PropertiesUtils.getThe("fileRoot"));
         }
     }
+
     @RequestMapping("/leaning")
     public void Learning(HttpServletRequest request, HttpServletResponse response, String listenContent, String answerContent) {
 //        userService.learning(listenContent,answerContent);
@@ -87,8 +91,8 @@ public class RobotController {
 
 //        if (multipartFile != null && multipartFile.size() == 1) {
 //            File file = TalkUtils.CommonsMultipartFileToFile(PropertiesUtils.getThe("filePath"), multipartFile.get(0));
-            answerContent0 = hasFile(answerContent0,
-                    multipartHttpServletRequest);//滴滴滴，当前默认为回答
+        answerContent0 = hasFile(answerContent0,
+                multipartHttpServletRequest);//滴滴滴，当前默认为回答
 //        }
         learningModel = new LearningModel();
         learningModel.setListenContent(listenContent0);
@@ -101,28 +105,26 @@ public class RobotController {
     @RequestMapping("/talk")
     @ResponseBody
     public Map<String, Object> Talking(HttpServletRequest request, HttpServletResponse response, String listenContent) throws IOException {
-//        userService.learning(listenContent,oneContent);
-        oneContents = robotService.Answer(listenContent);
-        String fileId = "";
-//        request.setAttribute("back", oneContents);
+        FileStoreInfo fileStoreInfo;
         Map<String, Object> result = new HashMap<String, Object>();
+
+        if (listenContent.contains("fileList")){
+            List<FileStoreInfo> fileStoreInfoList= fileService.listAllFile();
+            result.put("fileList",fileStoreInfoList);
+            return result;
+        }
+        oneContents = robotService.Answer(listenContent);
         //滴滴滴，考虑扩展成一次显示多个
         OneContent oneContent1 = TalkUtils.findTheBestOne(oneContents);
         if (oneContent1.getFileId() != null) {
 //            url = downloadFile(oneContent1.getFileId());
-            fileId=oneContent1.getFileId();
+            fileStoreInfo = robotService.getFileMsgById(oneContent1.getFileId());
+            result.put("fileName", fileStoreInfo.getFileName());//若有文件则id不为空
+            result.put("fileId", oneContent1.getFileId());//若有文件则id不为空
+
         }
         oneContent = oneContent1;
-//        oneContents.remove(oneContent1);
         result.put("back", oneContent1.getWords());
-        result.put("fileId", fileId);//若有文件则id不为空
-        result.put("fileName", "51.sql");//若有文件则id不为空
-
-//        result.put("all", oneContents);
-//        renderJson(result);
-//        response.setStatus(200);
-//        response.setCharacterEncoding("GBK");
-//        response.getWriter().write(a);
 
         return result;
 
@@ -205,7 +207,7 @@ public class RobotController {
 
             String fileId = fileMd5 + "_" + String.valueOf(fileSize);
 
-            saveFileMsg(fileId,fileMd5,fileSize,fileInfo.getLeft());
+            saveFileMsg(fileId, fileMd5, fileSize, fileInfo.getLeft());
             oneContent.setFileId(fileId);
             FileSystemOpt.deleteFile(tempFilePath);
         } catch (IOException e) {
@@ -215,19 +217,20 @@ public class RobotController {
     }
 
     private void saveFileMsg(String fileId, String fileMd5, long fileSize, String fileName) {
-        robotService.saveFileMsg(fileId,fileMd5,fileSize,fileName);
+        robotService.saveFileMsg(fileId, fileMd5, fileSize, fileName);
     }
 
     /**
      * 根据文件的 MD5码 下载不受保护的文件，不需要访问文件记录
      * 如果是通过 store 上传的需要指定 extName 扩展名
+     *
      * @param md5SizeExt 文件的Md5码和文件的大小 格式为 MD5_SIZE.EXT
-     * @param fileName 文件的名称包括扩展名，如果这个不为空， 上面的 md5SizeExt 可以没有 .Ext 扩展名
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
+     * @param fileName   文件的名称包括扩展名，如果这个不为空， 上面的 md5SizeExt 可以没有 .Ext 扩展名
+     * @param request    HttpServletRequest
+     * @param response   HttpServletResponse
      * @throws IOException IOException
      */
-    @RequestMapping(value= "/download/{md5SizeExt}", method= RequestMethod.GET)
+    @RequestMapping(value = "/download/{md5SizeExt}", method = RequestMethod.GET)
     public void downloadUnprotectedFile(@PathVariable("md5SizeExt") String md5SizeExt,
                                         String fileName,
                                         HttpServletRequest request,
@@ -235,25 +238,26 @@ public class RobotController {
         //FileStoreInfo stroeInfo = fileStoreInfoManager.getObjectById(md5);
         //downloadFile(stroeInfo,request,response);
         String uri = request.getRequestURI();
-        String [] urips = uri.split("/");
-        int n=urips.length;
-        if(org.apache.commons.lang3.StringUtils.isBlank(fileName)){
-            fileName = urips[n-1];
+        String[] urips = uri.split("/");
+        int n = urips.length;
+        if (org.apache.commons.lang3.StringUtils.isBlank(fileName)) {
+            fileName = urips[n - 1];
         }
-        String fileMd5 =  md5SizeExt.substring(0,32);
+        String fileMd5 = md5SizeExt.substring(0, 32);
         int pos = md5SizeExt.indexOf('.');
         //String extName = md5SizeExt.substring(pos);
-        long fileSize = pos<0? NumberBaseOpt.parseLong(md5SizeExt.substring(33),0l)
-                : NumberBaseOpt.parseLong(md5SizeExt.substring(33,pos),0l);
+        long fileSize = pos < 0 ? NumberBaseOpt.parseLong(md5SizeExt.substring(33), 0l)
+                : NumberBaseOpt.parseLong(md5SizeExt.substring(33, pos), 0l);
 
         String filePath = fileStore.getFileStoreUrl(fileMd5, fileSize);
         InputStream inputStream = fileStore.loadFileStream(filePath);
-        downFileRange(request,  response,
+        downFileRange(request, response,
                 inputStream, fileSize,
                 fileName);
     }
+
     private static void downFileRange(HttpServletRequest request, HttpServletResponse response,
-                                      InputStream inputStream,long fSize, String fileName)
+                                      InputStream inputStream, long fSize, String fileName)
             throws IOException {
         UploadDownloadUtils.downFileRange(request, response,
                 inputStream, fSize, fileName);
