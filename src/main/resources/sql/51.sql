@@ -20,22 +20,22 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for books
 -- ----------------------------
-DROP TABLE IF EXISTS `books`;
-CREATE TABLE `books`  (
-  `id` int(11) NOT NULL,
-  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `contacts` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `sellercall` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `sellerstudentnumber` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+-- DROP TABLE IF EXISTS `books`;
+-- CREATE TABLE `books`  (
+--   `id` int(11) NOT NULL,
+--   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+--   `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+--   `contacts` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+--   `sellercall` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+--   `sellerstudentnumber` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+--   PRIMARY KEY (`id`) USING BTREE
+-- ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for conversation_content
 -- ----------------------------
-DROP TABLE IF EXISTS `conversation_content`;
-CREATE TABLE `conversation_content`  (
+DROP TABLE IF EXISTS `robot_conversation_content`;
+CREATE TABLE `robot_conversation_content`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `words` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '类型：file，word，video，img',
@@ -49,8 +49,8 @@ CREATE TABLE `conversation_content`  (
 -- ----------------------------
 -- Table structure for talk
 -- ----------------------------
-DROP TABLE IF EXISTS `talk`;
-CREATE TABLE `talk`  (
+DROP TABLE IF EXISTS `robot_talk_relation`;
+CREATE TABLE `robot_talk_relation`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `come_id` int(11) DEFAULT NULL,
   `back_id` int(11) DEFAULT NULL,
@@ -79,16 +79,16 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Table structure for users
 -- ----------------------------
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users`  (
-  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `studentnumber` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '学号\r\n',
-  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `schoolname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `NO` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`NO`, `studentnumber`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+-- DROP TABLE IF EXISTS `users`;
+-- CREATE TABLE `users`  (
+--   `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+--   `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+--   `studentnumber` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '学号\r\n',
+--   `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+--   `schoolname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+--   `NO` int(11) NOT NULL AUTO_INCREMENT,
+--   PRIMARY KEY (`NO`, `studentnumber`) USING BTREE
+-- ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Procedure structure for test1
