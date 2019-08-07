@@ -1,12 +1,16 @@
 package com.chatRobot.controller;
 
+import javax.jws.WebMethod;
 import javax.servlet.http.HttpServletRequest;
 
+import com.centit.framework.common.JsonResultUtils;
 import com.chatRobot.model.User;
 import com.chatRobot.service.IUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -57,7 +61,16 @@ public class UserController {
         modelAndView.setViewName("redirect:/welcome.jsp");
         return modelAndView;
     }
-    @RequestMapping("/login.do")
+
+    @RequestMapping(value = "/isLogin",method = RequestMethod.GET)
+
+    public void islogin( HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 普遍通配符*
+        JsonResultUtils.writeMessageJson("a",response);
+        String m="";
+        System.out.println("asd");
+    }
+    @RequestMapping("/login")
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");

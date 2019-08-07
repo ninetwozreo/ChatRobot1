@@ -4,13 +4,11 @@ package com.chatRobot.controller;
 //import com.centit.fileserver.client.po.FileStoreInfo;
 
 import com.alibaba.fastjson.JSONObject;
-import com.centit.fileserver.client.FileClient;
 import com.centit.fileserver.client.po.FileStoreInfo;
 import com.centit.fileserver.utils.FileStore;
 import com.centit.fileserver.utils.OsFileStore;
 import com.centit.fileserver.utils.SystemTempFileUtils;
 import com.centit.fileserver.utils.UploadDownloadUtils;
-import com.centit.framework.common.JsonResultUtils;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.file.FileIOOpt;
 import com.centit.support.file.FileMD5Maker;
