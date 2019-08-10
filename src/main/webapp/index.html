@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <script src="static/js/jquery.js"></script>
+    <!--<script src="static/js/echarts.common.min.js"></script>-->
+    <script src="static/js/echarts.min.js"></script>
+    <script src="https://www.echartsjs.com/examples/vendors/echarts/extension/bmap.js?_v_=1553896255267"></script>
+    <!--PlhFWpA02aoURjAOpnWcRGqw7AI8EEyO-->
+    <script src="https://api.map.baidu.com/api?v=2.0&ak=nSxiPohfziUaCuONe4ViUP2N&__ec_v__=20190126"></script>
     <script src="js/index.js"></script>
     <link rel="stylesheet" href="css/index.css"/>
 
@@ -22,9 +27,13 @@
 <!--}-->
 <!--</script>-->
 <body>
+<div id ="main" style="width: 1700px;height:800px;">
 
+
+</div>
 <div style="margin-left: 600px;margin-top: 300px">
     <!--<button id="aaa" class="button-main" onclick="mmmmm()">talk</button>-->
+    <button id="showMap" class="button-main" onclick="showMap()">showMap</button>
     <button id="talkButton" class="button-main" onclick="talk()">talk</button>
     <button id="change" class="button-manage" style="display: none" onclick="changed()">notthis</button>
     <button id="makeSure" class="button-manage" style="display: none" onclick="makeSure()">isthis</button>
@@ -50,6 +59,7 @@
             <a id="fileDownload" ></a>
         </div>
     </div>
+
 </div>
 </body>
 </html>

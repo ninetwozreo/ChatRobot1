@@ -6,12 +6,12 @@
 
     <!--通过用户名查找对应的密码-->
     <select id="selectPasswordByUserName" resultType="String" parameterType="String">
-        SELECT password FROM  USER  WHERE username=#{username}
+        SELECT password FROM  user  WHERE username=#{username}
     </select>
 
     <!--用户名查找用户信息-->
     <select id="selectUserByName" resultType="User" parameterType="String">
-        SELECT * FROM  USER WHERE username=#{username}
+        SELECT * FROM  user WHERE username=#{username}
     </select>
 
     <!--通过用户id查找用户信息-->
@@ -22,7 +22,7 @@
     <!--<parameterMap id="" type=""-->
     <!--注册新用户-->
     <insert id="insertUser" parameterType="User">
-          INSERT INTO USER(email,password,username,role,status,regTime,regIp)VALUES
+          INSERT INTO user(email,password,username,role,status,regTime,regIp)VALUES
           (#{email},#{password},#{username},#{role},#{status},#{regTime},#{regIp})
     </insert>
 
